@@ -4,5 +4,10 @@ __pycache__/
 .venv
 .envrc
 .DS_Store
-wellness_data.csv # personal data file
-config.yaml # personal config file
+
+# Data
+data/
+wellness_data.csv
+
+# Configs
+configs/config.yaml
