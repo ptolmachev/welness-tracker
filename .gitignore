@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+.venv
+.envrc
+.DS_Store
+wellness_data.csv
+config.yaml
