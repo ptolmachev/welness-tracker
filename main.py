@@ -102,6 +102,7 @@ def cast_initial_value(field: dict, stored):
     t = field["type"]
     default = field.get("default")
 
+    # Prefer stored value; fall back to default from config
     v = stored if stored is not None else default
 
     if t == "number":
@@ -124,7 +125,15 @@ def cast_initial_value(field: dict, stored):
         return opts[0] if opts else ""
 
     if t == "slider":
-        return int(v)
+        # slider always needs a numeric value for UI
+        if v is None or (isinstance(v, str) and v.strip().lower() in {"", "none", "nan"}):
+            # fall back to default, then min, then 0
+            v = field.get("default", field.get("min", 0))
+        try:
+            return int(v)
+        except (TypeError, ValueError):
+            # final fallback so Streamlit never sees a non-numeric slider value
+            return int(field.get("default", field.get("min", 0)))
 
     if t in ("text", "textarea"):
         return "" if v is None else str(v)
