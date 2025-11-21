@@ -6,6 +6,14 @@ This makes the system extremely easy to customize without modifying Python code.
 
 ---
 
+## Interface Preview
+
+<p align="center">
+  <img src="img/wellness-tracker.png" width="600" style="border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.25);">
+</p>
+
+
+
 ## Features
 
 ### ✔ Fully Configurable via YAML
