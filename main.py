@@ -106,7 +106,13 @@ def cast_initial_value(field: dict, stored):
 
     if t == "number":
         subtype = field.get("subtype", "float")
-        return int(v) if subtype == "int" else float(v)
+        # treat special "empty" values as None
+        if v is None or (isinstance(v, str) and v.strip().lower() in {"", "none", "nan"}):
+            return None
+        try:
+            return int(v) if subtype == "int" else float(v)
+        except (TypeError, ValueError):
+            return None
 
     if t == "checkbox":
         return bool(v)
@@ -143,8 +149,11 @@ def render_field(field: dict, col, today_data: dict, block_id: str):
     stored = today_data.get(name, None)
     init = cast_initial_value(field, stored)
 
+
     if ftype == "number":
         subtype = field.get("subtype", "float")
+        allow_none = field.get("allow_none", False)
+
         kwargs = {}
         if "min" in field:
             kwargs["min_value"] = field["min"]
@@ -152,9 +161,22 @@ def render_field(field: dict, col, today_data: dict, block_id: str):
             kwargs["max_value"] = field["max"]
         if "step" in field:
             kwargs["step"] = field["step"]
-        if subtype == "int":
-            return col.number_input(label, value=int(init), key=key, **kwargs)
-        return col.number_input(label, value=float(init), key=key, **kwargs)
+
+        # If we allow None, add a "no value" checkbox above the input
+        if allow_none:
+            none_key = f"{key}__none"
+            is_none_default = init is None
+            is_none = col.checkbox(f"{label}: not measured", value=is_none_default, key=none_key)
+            if is_none:
+                # user explicitly says "None" → don't even show/use the numeric input
+                return None
+
+        if init is None:
+            init_val = field.get("min", 0 if subtype == "int" else 0.0)
+        else:
+            init_val = int(init) if subtype == "int" else float(init)
+
+        return col.number_input(label, value=init_val, key=key, **kwargs)
 
     if ftype == "checkbox":
         return col.checkbox(label, value=bool(init), key=key)
@@ -294,7 +316,7 @@ class WellnessApp:
 
 
 def main():
-    app = WellnessApp(config_path="configs/example_config.yaml")
+    app = WellnessApp(config_path="configs/myconfig.yaml")
     app.run()
 
 

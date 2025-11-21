@@ -1,21 +1,22 @@
 app:
   title: "Daily Health & Performance Log"
   font_size: 32
-  data_file: "./data/wellness_data_example.csv"
+  data_file: "./data/wellness_data.csv"
 
 blocks:
   - id: morning
     title: "A. Morning Markers"
     expanded: true
     save_label: "Save Morning Metrics"
-    n_cols: 4
+    n_cols: 3
     fields:
       - name: fasting_glucose
         label: "Fasting Glucose (mg/dL)"
         type: number
         subtype: int
         min: 0
-        default: 85
+        allow_none: true
+        default: None
         col: 0
 
       - name: rhr
@@ -23,25 +24,18 @@ blocks:
         type: number
         subtype: int
         min: 0
-        default: 50
-        col: 1
+        allow_none: true
+        default: None
+        col: 0
 
       - name: hrv
-        label: "HRV"
+        label: "HRV (Fitbit)"
         type: number
         subtype: int
         min: 0
-        default: None
         allow_none: true
-        col: 2
-
-      - name: grip_strength
-        label: "Grip Strength (kg)"
-        type: number
-        subtype: int
-        min: 0
-        default: 40
-        col: 3
+        default: None
+        col: 0
 
       - name: sleep_hours
         label: "Sleep Hours"
@@ -49,8 +43,9 @@ blocks:
         subtype: float
         min: 0.0
         step: 0.1
-        default: 7.5
-        col: 0
+        allow_none: true
+        default: None
+        col: 1
 
       - name: sleep_quality
         label: "Sleep Quality (0-10)"
@@ -65,20 +60,48 @@ blocks:
         label: "Time of Waking"
         type: time
         default: "now"
-        col: 2
+        col: 1
 
       - name: sleep_time
         label: "Time of Sleeping (yesterday)"
         type: time
         default: "now"
-        col: 3
+        col: 1
+
+      - name: grip_strength
+        label: "Grip Strength (kg)"
+        type: number
+        subtype: int
+        min: 0
+        allow_none: true
+        default: None
+        col: 2
 
   - id: behaviors
     title: "B. Daily Behaviors"
     expanded: true
     save_label: "Save Daily Behaviors"
-    n_cols: 2
+    n_cols: 3
     fields:
+
+      - name: brief_morning_exercise
+        label: "Brief Morning Exercise"
+        type: checkbox
+        default: false
+        col: 0
+
+      - name: compulsive_gaming
+        label: "Compulsive Gaming"
+        type: checkbox
+        default: false
+        col: 0
+
+      - name: meditation
+        label: "Meditation"
+        type: checkbox
+        default: false
+        col: 0
+
       - name: food_quality
         label: "Food Quality (0-10)"
         type: number
@@ -88,17 +111,12 @@ blocks:
         default: 8
         col: 0
 
-      - name: meditation
-        label: "Meditation"
-        type: checkbox
-        default: false
-        col: 0
-
       - name: calorie_restriction
         label: "Calorie Restriction"
-        type: checkbox
-        default: false
-        col: 0
+        type: select
+        options: ["No", "Yes"]
+        default: "No"
+        col: 1
 
       - name: caffeine_mg
         label: "Caffeine (mg)"
@@ -115,7 +133,14 @@ blocks:
         min: 0.0
         step: 0.5
         default: 0.0
-        col: 1
+        col: 2
+
+      - name: cannabis
+        label: "Cannabis Use"
+        type: select
+        options: ["None", "A bit", "A lot"]
+        default: "None"
+        col: 2
 
   - id: exercise
     title: "C. Exercise"
@@ -135,8 +160,7 @@ blocks:
         subtype: float
         min: 0.0
         step: 0.1
-        default: None
-        allow_none: true
+        default: 0.0
         col: 0
 
       - name: exercise_other
@@ -160,20 +184,20 @@ blocks:
     save_label: "Save Medications"
     n_cols: 3
     fields:
-      - name: med_1
-        label: "Medication 1"
+      - name: med_Bupropion
+        label: "Bupropion"
         type: checkbox
         default: false
         col: 0
 
-      - name: med_2
-        label: "Medication 2"
+      - name: med_Levothyroxine
+        label: "Levothyroxine"
         type: checkbox
         default: false
         col: 1
 
-      - name: med_3
-        label: "Medication 3"
+      - name: med_Modafinil
+        label: "Modafinil"
         type: checkbox
         default: false
         col: 2
@@ -184,32 +208,74 @@ blocks:
     save_label: "Save Supplements"
     n_cols: 3
     fields:
-      - name: supp_multivitamin
-        label: "Multivitamin"
-        type: checkbox
-        default: false
-        col: 0
-
-      - name: supp_vitamin_d
+      - name: supp_Vitamin_D
         label: "Vitamin D"
         type: checkbox
         default: false
         col: 0
 
-      - name: supp_omega_3
+      - name: supp_Omega_3
         label: "Omega 3"
         type: checkbox
         default: false
-        col: 1
+        col: 0
 
-      - name: supp_magnesium
-        label: "Magnesium"
+      - name: supp_GNC_B_complex
+        label: "GNC B complex"
         type: checkbox
         default: false
         col: 1
 
-      - name: supp_creatine
+      - name: supp_Thorne_B_complex
+        label: "Thorne B complex"
+        type: checkbox
+        default: false
+        col: 1
+
+      - name: supp_Rogaine
+        label: "Rogaine"
+        type: checkbox
+        default: false
+        col: 2
+
+      # - name: supp_Ashwagandha
+      #   label: "Ashwagandha"
+      #   type: checkbox
+      #   default: false
+      #   col: 2
+
+      - name: supp_TMG
+        label: "TMG"
+        type: checkbox
+        default: false
+        col: 0
+
+      - name: supp_Creatine
         label: "Creatine"
+        type: checkbox
+        default: false
+        col: 1
+
+      - name: supp_Hyaluronic_Acid
+        label: "Hyaluronic Acid"
+        type: checkbox
+        default: false
+        col: 2
+
+      - name: supp_Face_Cream
+        label: "Face Cream"
+        type: checkbox
+        default: false
+        col: 0
+
+      - name: supp_Magnesium_glycinate
+        label: "Magnesium glycinate"
+        type: checkbox
+        default: false
+        col: 1
+
+      - name: supp_Melatonin
+        label: "Melatonin"
         type: checkbox
         default: false
         col: 2
@@ -291,11 +357,17 @@ blocks:
         col: 1
 
   - id: optional
-    title: "G. Miscellaneous"
+    title: "G. Optional"
     expanded: true
-    save_label: "Save Miscellaneous"
+    save_label: "Save Optional"
     n_cols: 1
     fields:
+      - name: sweaty_palms
+        label: "Sweaty Palms"
+        type: checkbox
+        default: false
+        col: 0
+
       - name: notes
         label: "Free-text Notes"
         type: textarea

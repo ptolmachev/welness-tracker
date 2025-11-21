@@ -13,7 +13,6 @@ This makes the system extremely easy to customize without modifying Python code.
 </p>
 
 
-
 ## Features
 
 ### ✔ Fully Configurable via YAML
