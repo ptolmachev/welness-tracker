@@ -10,4 +10,4 @@ data/
 wellness_data.csv
 
 # Configs
-configs/config.yaml
+configs/myconfig.yaml
